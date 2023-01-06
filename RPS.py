@@ -8,10 +8,10 @@
 # is not a problem
 # - mrugresh look for our top pick in last 10 moves, hence, similar to kris,
 # once we establed a pattern, we're in control.
-wtf = {}
+steps = {}
 
 def player(prev_play, opponent_history=[]):
-  global wtf
+  global steps
 
   n = 6
 
@@ -21,20 +21,20 @@ def player(prev_play, opponent_history=[]):
   guess = "P" # default, until statistic kicks in
 
   if len(opponent_history)>n:
-    inp = "".join(opponent_history[-n:])
+    input = "".join(opponent_history[-n:])
 
-    if "".join(opponent_history[-(n+1):]) in wtf.keys():
-      wtf["".join(opponent_history[-(n+1):])]+=1
+    if "".join(opponent_history[-(n+1):]) in steps.keys():
+      steps["".join(opponent_history[-(n+1):])]+=1
     else:
-      wtf["".join(opponent_history[-(n+1):])]=1
+      steps["".join(opponent_history[-(n+1):])]=1
 
-    possible = [inp+"R", inp+"P", inp+"S"]
+    possible = [input+"R", input+"P", input+"S"]
 
     for i in possible:
-      if not i in wtf.keys():
-        wtf[i] = 0
+      if not i in steps.keys():
+        steps[i] = 0
 
-    predict = max(possible, key=lambda key: wtf[key])
+    predict = max(possible, key=lambda key: steps[key])
 
     if predict[-1] == "P":
       guess = "S"
