@@ -1,7 +1,3 @@
-counter_move = {"R": "P", "P": "S", "S": "R"}
-steps = {}
-
-
 # the strategy is similar to abbey, but we look backs harder than her.
 # she only look back 2 steps, find most frequently pattern of all 2 moves,
 #
@@ -12,51 +8,43 @@ steps = {}
 # is not a problem
 # - mrugresh look for our top pick in last 10 moves, hence, similar to kris,
 # once we establed a pattern, we're in control.
+wtf = {}
+
 def player(prev_play, opponent_history=[]):
-    if prev_play != "":
-        opponent_history.append(prev_play)
+  global wtf
 
-    # Interestingly, 3 to 6 works best, as in we win more than 60%.
-    # If n is larger than 6, we start to get terrible result.
-    # I guess it's becauase we don't have enough data to predict once n get that
-    # larger, we only play 1000 games.
-    n = 2
+  n = 6
 
-    hist = opponent_history
+  if prev_play in ["R","P","S"]:
+    opponent_history.append(prev_play)
 
-    guess = "R"
-    if len(hist) > n:
-        pattern = join(hist[-n:])
+  guess = "P" # default, until statistic kicks in
 
-        if join(hist[-(n + 1):]) in steps.keys():
-            steps[join(hist[-(n + 1):])] += 1
-        else:
-            steps[join(hist[-(n + 1):])] = 1
+  if len(opponent_history)>n:
+    inp = "".join(opponent_history[-n:])
 
-        possible = [pattern + "R", pattern + "P", pattern + "S"]
+    if "".join(opponent_history[-(n+1):]) in wtf.keys():
+      wtf["".join(opponent_history[-(n+1):])]+=1
+    else:
+      wtf["".join(opponent_history[-(n+1):])]=1
 
-        for i in possible:
-            if not i in steps.keys():
-                steps[i] = 0
+    possible = [inp+"R", inp+"P", inp+"S"]
 
-        predict = max(possible, key=lambda key: steps[key])
+    for i in possible:
+      if not i in wtf.keys():
+        wtf[i] = 0
 
-        if predict[-1] == "P":
-            guess = "S"
-        if predict[-1] == "R":
-            guess = "P"
-        if predict[-1] == "S":
-            guess = "R"
+    predict = max(possible, key=lambda key: wtf[key])
 
-    return guess
+    if predict[-1] == "P":
+      guess = "S"
+    if predict[-1] == "R":
+      guess = "P"
+    if predict[-1] == "S":
+      guess = "R"
 
 
-def join(moves):
-    return "".join(moves)
-
-
-
-
+  return guess
 
 # # The example function below keeps track of the opponent's history and plays whatever the opponent played two plays ago. It is not a very good player so you will need to change the code to pass the challenge.
 
